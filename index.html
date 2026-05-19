@@ -865,33 +865,11 @@
     });
   }
 
-  async function analyzeImage(base64Image) {
-  const res = await fetch("[api.openai.com](https://api.openai.com/v1/responses)", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer YOUR_API_KEY"
-    },
-    body: JSON.stringify({
-      model: "gpt-4.1",
-      input: [{
-        role: "user",
-        content: [
-          { type: "input_text", text: "この画像に写っている食材を日本語でリストアップしてください（JSON配列のみ）" },
-          {
-            type: "input_image",
-            image_url: base64Image
-          }
-        ]
-      }]
-    })
-  });
+  async function generateRecipes() {
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = true;
 
-  const data = await res.json();
-  const text = data.output[0].content[0].text;
-  return JSON.parse(text);
-}
-
+    switchTab('result');
 
     document.getElementById('resultContent').innerHTML = `
       <div class="loading-area fade-in">
@@ -900,6 +878,13 @@
         <div class="loading-sub">AIが最適な献立を考えています</div>
       </div>
     `;
+
+    // Detected ingredients (demo)
+    const sampleIngredients = [
+      '豚バラ肉', '鶏むね肉', 'キャベツ', '玉ねぎ', 'にんじん',
+      'じゃがいも', '卵', '豆腐', 'ねぎ', '生姜', 'にんにく',
+      'トマト', 'ほうれん草', '牛乳', 'チーズ'
+    ];
 
     const genreText = selectedGenre === 'なんでも' ? '和食・洋食・中華・韓国料理などバランスよく' : selectedGenre;
 
@@ -1017,64 +1002,7 @@ ${servings}人分で作れる献立を3品提案してください。
       renderRecipes(fallback, sampleIngredients);
     }
     btn.disabled = false;
-  
-    async function generateRecipes() {
-  if (!fridgePhotoData) {
-    alert("写真をアップしてください");
-    return;
   }
-
-  const btn = document.getElementById('generateBtn');
-  btn.disabled = true;
-
-  switchTab('result');
-
-  document.getElementById('resultContent').innerHTML = `
-    <div class="loading-area fade-in">
-      <div class="spinner"></div>
-      <div class="loading-text">食材を分析中...</div>
-    </div>
-  `;
-
-  try {
-    // ✅ ① 画像解析
-    const ingredients = await analyzeImage(fridgePhotoData);
-
-    // ✅ ② 献立生成
-    const prompt = `以下の食材があります：
-${ingredients.join("、")}
-
-${servings}人分の献立を3品提案してください。
-ジャンル：${selectedGenre}
-
-JSONのみで出力：
-[ { name, emoji, genre, time, difficulty, description, ingredients, steps } ]`;
-
-    const res = await fetch("[api.openai.com](https://api.openai.com/v1/responses)", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer YOUR_API_KEY"
-      },
-      body: JSON.stringify({
-        model: "gpt-4.1",
-        input: prompt
-      })
-    });
-
-    const data = await res.json();
-    const text = data.output[0].content[0].text;
-    const recipes = JSON.parse(text);
-
-    renderRecipes(recipes, ingredients);
-
-  } catch (e) {
-    alert("生成に失敗しました");
-    console.error(e);
-  }
-
-  btn.disabled = false;
-}
 
   function renderRecipes(recipes, ingredients) {
     const badgesHtml = ingredients.slice(0, 8).map(i => `<span class="badge">${i}</span>`).join('');
