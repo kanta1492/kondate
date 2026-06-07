@@ -1,0 +1,6 @@
+{
+  "name": "AI献立",
+  "description": "冷蔵庫にある食材を登録し、それらを使ったおいしくて簡単な献立・レシピをAI（Gemini）が提案する、主婦・主夫のための献立支援アプリです。",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
