@@ -1,0 +1,12 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "shufu-refrigerator-spa"
+compatibility_date = "2026-06-10"
+pages_build_output_dir = "dist"
+
+# Configuration options for deployment to Cloudflare Pages
+[site]
+bucket = "./dist"
+
+[env.production.vars]
+# Define your frontend environment variables for Cloudflare Pages here if needed:
+# VITE_GOOGLE_MAPS_PLATFORM_KEY = "your-google-maps-api-key"

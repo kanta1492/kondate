@@ -1,0 +1,3 @@
+# Cloudflare Pages SPA Redirection and Fallback Rule
+# This directs all edge routing directly back to index.html for React SPA
+/* /index.html 200
